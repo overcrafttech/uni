@@ -1,3 +1,11 @@
+"""
+
+Python ist ja ganz nett, aber ist C nicht besser und überhaupt was soll dieses Einrücken?
+
+~ Guido von Rossum
+
+"""
+
 import math
 
 x = float(input())
