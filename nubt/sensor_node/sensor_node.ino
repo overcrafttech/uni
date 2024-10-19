@@ -1,7 +1,7 @@
 #include <Wire.h>
 
 //i2c Setup
-#define i2c_sda 12 
+#define i2c_sda 12
 #define i2c_scl 13
 #define i2c_speed 400000
 #define sensirion_address 0x44
@@ -21,46 +21,48 @@ void setup() {
   //while(!Serial.available()){
   //  ;
   //}
-  Serial.println("USB serial port connected.");
+  //Serial.println("USB serial port connected.");
 
   //i2c Setup
+  /*
   Serial.print("Configuring software-i2c with ");
   Serial.print(i2c_sda, DEC);
   Serial.print(" as sda and ");
   Serial.print(i2c_scl, DEC);
   Serial.println(" as scl. ");
+  */
   Wire.begin(i2c_sda, i2c_scl);
   //Wire.setClock(i2c_speed);
 
   //pin Setup
-  Serial.println("Pin setup");
+  //Serial.println("Pin setup");
   pinMode(LED_BUILTIN,OUTPUT);
   digitalWrite(LED_BUILTIN, LOW);
   delay(500);
   digitalWrite(LED_BUILTIN, HIGH);
 
-  Serial.println("Initiate measurements");
+  //Serial.println("Initiate measurements");
   Wire.beginTransmission(sensirion_address);
   Wire.write(0x27); //start periodic, 10 mps
   Wire.write(0x37); //high repeatibility
   Wire.endTransmission();
 
-  Serial.println("Disable Heater");
+  //Serial.println("Disable Heater");
   Wire.beginTransmission(sensirion_address);
   Wire.write(0x30); //start periodic, 10 mps
   Wire.write(0x66); //high repeatibility
   Wire.endTransmission();
+  delay(15);
 }
 
 void loop() {
   read_data();
-  Serial.print("Temperatur: ");
   Serial.print(temperature);
-  Serial.println("°C");
-  Serial.print("Luftfeuchtigkeit: ");
+  Serial.print(" °C, ");
   Serial.print(humidity);
   Serial.println("%");
-  delay(2000);
+  //ESP.deepSleep(1e6);
+  delay(500);
 }
 
 uint8_t read_data(){
@@ -83,7 +85,7 @@ uint8_t read_data(){
   temperature = -45.0 + 175.0 * (float(temperature_raw)/65535.0);
 
   humidity_raw = (data[3] << 8) | data[4];
-  humidity = 100 * (float(humidity_raw)/65535.0 );
+  humidity = 100.0 * (float(humidity_raw)/65535.0);
 
   return 0;
 }
